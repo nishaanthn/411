@@ -30,6 +30,7 @@ class Point implements Comparable<Point>
 
 public class Graham {
 
+	// done with arctan, not cross product
 	public float calculate_polar_angle(Point a, Point b)
 	{
 		double angle, delta_x, delta_y;
@@ -43,13 +44,15 @@ public class Graham {
 		return (float) angle;
 	}
     
+    // determinant
     private float ccw(Point p, Point q, Point r)
     {
         float val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
-        System.out.println(val);
+        //System.out.println(val);
         return val;
     }
 	
+	// swap function that reflects in the original array
 	public Point[] point_swap(Point[] pts, int a, int b)
 	{
 		Point temp = new Point();
@@ -60,6 +63,7 @@ public class Graham {
 		return pts;
 	}
 
+	// return index of point with lowest y
 	public int return_lowest_point_index(Point[] points)
 	{
 		// Node to return
@@ -80,18 +84,19 @@ public class Graham {
 		return index_of_lowest;
 	}
 	
+	// sort from lowest polar angle to highest and return
 	public Point[] sort_polar_angle(Point[] points)
 	{
 				
 		//find index of p0
 		int index_of_lowest = return_lowest_point_index(points);
 
-		System.out.println(points[index_of_lowest]);
+		//System.out.println(points[index_of_lowest]);
 		
 		//put p0 in the first index of new_points
 		points = point_swap(points, 0, index_of_lowest);
 
-		display(points);
+		//display(points);
 		
 		//keep track of minimum polar angle and calculate polar angle for each point
 		float min_angle = calculate_polar_angle(points[0],points[1]);
@@ -106,13 +111,14 @@ public class Graham {
 		
 		// make sure p0 is always the first element and sort the rest
 		points[0].polar_angle = min_angle - 1;		
-		System.out.println(points);
+		//System.out.println(points);
 		Arrays.sort(points);
 		
 		return points;
 	}
 	
-	public void grahams_scan(Point[] pts)
+	// The meat of the algorithm
+	public Stack<Point> grahams_scan(Point[] pts)
 	{
         Point[] points = new Point[pts.length];
 		Stack<Point> hull_stack = new Stack<Point>();
@@ -124,7 +130,7 @@ public class Graham {
 		//sort the points by polar angle with the bottom most point
 		points = sort_polar_angle(points);
 
-		display(points);
+		//display(points);
 		
 		//init
 		hull_stack.push(points[0]);
@@ -145,32 +151,34 @@ public class Graham {
 		}
 		hull_stack.push(points[t]);
 
-		System.out.println(hull_stack);
+		//System.out.println(hull_stack);
         for (int i = t+1; i < points.length; i++)
         {
             Point top = hull_stack.pop();
             // TODO verify accuracy
             while(ccw(hull_stack.peek(), top, points[i]) > 0)
             {
-            	System.out.println("Popping");
+            	//System.out.println("Popping");
             	top = hull_stack.pop();
             }
             hull_stack.push(top);
             hull_stack.push(points[i]);
         }
 
-        System.out.println(hull_stack);
+        return (hull_stack);
 
 	}
 
+	// standard display function
 	public void display(Point[] points)
     {
         System.out.println("\n points : ");
         for (int i = 0; i < points.length; i++)
             System.out.println(points[i]);
 
-    }	
-	
+    }
+
+    // Main	
 	public static void main(String[] args)
 	{
 		try
@@ -194,9 +202,10 @@ public class Graham {
 	        }
 		    Graham g = new Graham();
 		    long startTime = System.nanoTime();
-        	g.grahams_scan(points);
+        	Stack<Point> hull_stack = g.grahams_scan(points);
         	long endTime = System.nanoTime();
-        	long duration = endTime - startTime;
+        	double duration = (endTime - startTime)/1000.0;
+        	System.out.println(hull_stack);
         	System.out.println("DURATION: "+duration);
 
 	    } catch(IOException e) {}

@@ -1,9 +1,8 @@
 import java.io.*;
-import java.util.Scanner;
 import java.util.Arrays;
 
 
-/** Class point **/
+// Our Point Class
 class Point
 {
     public float x, y;
@@ -14,12 +13,11 @@ class Point
     {
     	return ("( "+x+", "+y+")");
     }
-
 }
- 
-/** Class Jarvis **/
+
 public class Jarvis
 {
+    // A simple boolean implementation of CCW
     private boolean check_turn(Point p, Point q, Point r)
     {
         float val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
@@ -29,30 +27,29 @@ public class Jarvis
 
     }
 
-    public void convexHull(Point[] points)
+    // The meat of the program
+    public Point[] convexHull(Point[] points)
 
     {
         int n = points.length;
-        /** if less than 3 points return **/        
+        // if less than 3 points return null
         if (n < 3) 
-            return;     
+            return null;     
 
         int[] next = new int[n];
         Arrays.fill(next, -1);
-        /** find the leftmost point **/
+        // find the leftmost point
         int leftMost = 0;
         for (int i = 1; i < n; i++)
-
             if (points[i].x < points[leftMost].x)
-
                 leftMost = i;
 
         int p = leftMost, q;
 
-        /** iterate till p becomes leftMost **/
+        // iterate till p becomes leftMost
         do
 	    {
-            /** wrapping **/
+            // The actual wrapping
             q = (p + 1) % n;
             for (int i = 0; i < n; i++)
               if (check_turn(points[p], points[i], points[q]))
@@ -64,19 +61,20 @@ public class Jarvis
         } while (p != leftMost);
 
         // Display result 
-        display(points, next);
+        //display(points, next);
+        return points;
     }
 
-    public void display(Point[] points, int[] next)
+    // Code to display the array of points
+    public void display(Point[] points)
     {
         System.out.println("\nConvex Hull points : ");
-        for (int i = 0; i < next.length; i++)
-            if (next[i] != -1)
-               System.out.println(points[i]);
+        for (int i = 0; i < points.length; i++)
+            System.out.println(points[i]);
 
     }
 
-    /** Main function **/
+    // Main
 
     public static void main (String[] args) 
     {
@@ -101,9 +99,10 @@ public class Jarvis
 	        }
 		    Jarvis j = new Jarvis();
             long startTime = System.nanoTime();
-	        j.convexHull(points);
+	        Point[] pts = j.convexHull(points);
             long endTime = System.nanoTime();
-            long duration = endTime - startTime;
+            double duration = (endTime - startTime)/1000.0;
+            j.display(pts);
             System.out.println("DURATION: "+duration);
 
 	    } catch(IOException e) {}
