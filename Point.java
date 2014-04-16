@@ -1,4 +1,5 @@
 import java.lang.Math;
+import java.io.*;
 
 public class Point {
 
@@ -13,6 +14,10 @@ public class Point {
 
 	public Point (Point a) { this.x = a.x; this.y = a.y; polar_angle = 0.0; }
 
+    public String toString()
+    {
+        return  ("( "+x+", "+y+")");
+    }
 	
 	static public int return_lowest_point_index(Point[] points)
 	{
